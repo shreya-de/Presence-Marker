@@ -1,6 +1,5 @@
 from flask import Blueprint, request, redirect, url_for, render_template, send_from_directory
 
-from scripts.dhcp_list import DHCP
 from scripts.create_csv import attendance_csv
 
 import queue, json, os
@@ -59,7 +58,7 @@ def add_client_sheet_ajax():
 
 @sheet_ajax_blueprint.route("/{0}/submitted_attendance".format(base_url), methods=['POST'])
 def submitted_attendance():
-    global client_data
+    global client_data, client_ips
 
     ##########################################
     sem = request.form['hid_sem']
@@ -89,6 +88,8 @@ def submitted_attendance():
 
     while not client_data.empty():
         client_data.get()
+    while not client_ips.empty():
+        client_ips.get()
     return render_template("teacher_submit_response.html", filename=session_name, filepath=csv_path)
 
 @sheet_ajax_blueprint.route("/{0}/download".format(base_url), methods=['POST'])
